@@ -387,7 +387,7 @@ public class EventController {
 
     private String validateAndReserve(String eventName, ReservationForm reservation, BindingResult bindingResult, ServletWebRequest request, RedirectAttributes redirectAttributes, Locale locale, Event event) {
 
-        if(isCaptchaInvalid(request.getRequest(), event)) {
+        if(isCaptchaInvalid(reservation.getCaptcha(), request.getRequest(), event)) {
             bindingResult.reject(ErrorsCode.STEP_2_CAPTCHA_VALIDATION_FAILED);
         }
 
@@ -446,9 +446,9 @@ public class EventController {
         return promoCodeDiscount.getCategories().isEmpty() || promoCodeDiscount.getCategories().contains(ticketCategory.getId());
     }
 
-    private boolean isCaptchaInvalid(HttpServletRequest request, EventAndOrganizationId event) {
+    private boolean isCaptchaInvalid(String recaptchaResponse, HttpServletRequest request, EventAndOrganizationId event) {
         return configurationManager.isRecaptchaForTicketSelectionEnabled(event)
-            && !recaptchaService.checkRecaptcha(request);
+            && !recaptchaService.checkRecaptcha(recaptchaResponse, request);
     }
 
 }
